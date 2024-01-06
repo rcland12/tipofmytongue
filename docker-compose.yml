@@ -75,10 +75,9 @@ services:
       - backend
     ports:
       - 8000-8001:8000-8001
-    volumes:
-      - ./triton/all-MiniLM-L6-v2:/models:rw
     depends_on:
       - standalone
+    env_file: ./triton/.env
     healthcheck:
       test: [ "CMD", "curl", "-i", "-X", "GET", "http://localhost:8000/v2/health/ready" ]
       interval: 30s
