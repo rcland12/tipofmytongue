@@ -12,8 +12,12 @@ There are currently two models available at the following locations:
 * all-MiniLM-L6-v2: `s3://tipofmytongue-models/all-MiniLM-L6-v2/` (384 dimensions)
 * gte-large: `s3://tipofmytongue-models/gte-large/` (1024 dimensions)
 
-Triton can be started using Docker and the compose plugin. The service is located in the `docker-compose.yml` file named `triton`. 
+Triton can be started using Docker and the compose plugin. The service is located in the `docker-compose.yml` file named `triton`.
 
+To see each model repository, pull them down using the AWS cli:
+```bash
+aws s3 cp s3://tipofmytongue-models/ ./models/ --recursive
+```
 
 
 ## Using Triton on CPU
