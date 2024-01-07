@@ -21,7 +21,7 @@ The server relies on a list of words & a pre-computed PCA model file. Each of th
     python -m venv .venv
     source .venv/bin/activate
     pip install poetry
-    poetry install
+    poetry install --with local
     ```
     Poetry will install the "local" group for packages running in the venv, and the "docker" group for packages in the Docker container.
 
