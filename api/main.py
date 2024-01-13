@@ -18,8 +18,8 @@ from app.triton_utils import TritonRemoteModel
 ###########################
 ### App Dependencies
 ###########################
-# model_name = "gte-large"
 model_name = "all-MiniLM-L6-v2"
+# model_name = "gte-large"
 
 milvus_uri = "grpc://standalone:19530"
 triton_uri = "grpc://triton:8001"

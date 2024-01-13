@@ -86,6 +86,6 @@ if __name__ == "__main__":
         num_points=50,
         model_name="all-MiniLM-L6-v2",
         pca_model_path="res/pca_transform.pkl",
-        milvus_uri="grpc://standalone:19530",
-        triton_uri="grpc://triton:8001"
+        milvus_uri="grpc://localhost:19530",
+        triton_uri="grpc://localhost:8001"
     )
