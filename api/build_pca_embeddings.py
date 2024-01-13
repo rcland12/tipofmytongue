@@ -1,3 +1,4 @@
+import os
 import sys
 from pymilvus import (
     connections,
@@ -101,6 +102,6 @@ if __name__ == "__main__":
         embedding_dims=3,
         batch_size=5000,
         path_to_vocab="res/words.txt",
-        pca_model_path="res/pca_transform.pkl",
+        pca_model_path="res/",
         milvus_uri="grpc://localhost:19530"
     )
