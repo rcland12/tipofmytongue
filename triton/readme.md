@@ -1,14 +1,25 @@
 ## Setting up Triton Inference Server
-This Triton model repository is available at `s3://tipofmytongue-models/` and is public facing. This project requires an environment variable file at `triton/.env`.
+There are many different Triton model repositories available at `s3://tipofmytongue-models/` and are public facing. This project requires an environment variable file at `triton/.env` containing AWS credentials and the model and s3 bucket path defined in the `docker-compose.yml` file.
 
 ```bash title="triton/.env"
+# triton/.env
 AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
 AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
 AWS_DEFAULT_REGION=<AWS_DEFAULT_REGION>
-MODEL_REPO="s3://tipofmytongue-models/all-MiniLM-L6-v2/"
 ```
 
-There are currently six models available at the following locations:
+```bash title="docker-compose.yml"
+# docker-compose.yml
+services:
+  triton:
+    environment:
+      MODEL: all-MiniLM-L6-v2
+      MODEL_REPO: s3://tipofmytongue-models
+```
+
+The final path will concatenate these two variables with a forward slash (`/`).
+
+There are currently six model repositories available at the following locations:
 * all-MiniLM-L6-v2: `s3://tipofmytongue-models/all-MiniLM-L6-v2/` (384 dimensions)
 * all-distilroberta-v1: `s3://tipofmytongue-models/all-distilroberta-v1/` (768 dimensions)
 * gte-large: `s3://tipofmytongue-models/gte-large/` (1024 dimensions)

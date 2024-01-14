@@ -80,8 +80,8 @@ def main(
 
 if __name__ == "__main__":
     main(
-        model_name="gte-base",
-        embedding_dims=768,
+        model_name="gte-large",
+        embedding_dims=1024,
         batch_size=64,
         path_to_vocab="res/words.txt",
         milvus_uri="grpc://localhost:19530",
