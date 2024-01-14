@@ -31,8 +31,6 @@ services:
       MODEL_NAME: gte-small
       MILVUS_URI: grpc://standalone:19530
       TRITON_URI: grpc://triton:8001
-      PCA_MODEL_DIR: res/
-      MILVUS_CONNECTION_TIMEOUT: 60
     depends_on:
       - triton
       - standalone
