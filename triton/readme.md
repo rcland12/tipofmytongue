@@ -1,31 +1,31 @@
 ## Setting up Triton Inference Server
-This Triton model repository is available at `s3://tipofmytongue-models-gpu/` and is public facing. This project requires an environment variable file at `triton/.env`.
+This Triton model repository is available at `s3://tipofmytongue-models/` and is public facing. This project requires an environment variable file at `triton/.env`.
 
 ```bash title="triton/.env"
 AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
 AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
 AWS_DEFAULT_REGION=<AWS_DEFAULT_REGION>
-MODEL_REPO="s3://tipofmytongue-models-gpu/all-MiniLM-L6-v2/"
+MODEL_REPO="s3://tipofmytongue-models/all-MiniLM-L6-v2/"
 ```
 
 There are currently six models available at the following locations:
-* all-MiniLM-L6-v2: `s3://tipofmytongue-models-gpu/all-MiniLM-L6-v2/` (384 dimensions)
-* all-distilroberta-v1: `s3://tipofmytongue-models-gpu/all-distilroberta-v1/` (768 dimensions)
-* gte-large: `s3://tipofmytongue-models-gpu/gte-large/` (1024 dimensions)
-* gte-base: `s3://tipofmytongue-models-gpu/gte-base/` (768 dimensions)
-* gte-small: `s3://tipofmytongue-models-gpu/gte-small/` (384 dimensions)
-* ember-v1: `s3://tipofmytongue-models-gpu/ember-v1/` (1024 dimensions)
+* all-MiniLM-L6-v2: `s3://tipofmytongue-models/all-MiniLM-L6-v2/` (384 dimensions)
+* all-distilroberta-v1: `s3://tipofmytongue-models/all-distilroberta-v1/` (768 dimensions)
+* gte-large: `s3://tipofmytongue-models/gte-large/` (1024 dimensions)
+* gte-base: `s3://tipofmytongue-models/gte-base/` (768 dimensions)
+* gte-small: `s3://tipofmytongue-models/gte-small/` (384 dimensions)
+* ember-v1: `s3://tipofmytongue-models/ember-v1/` (1024 dimensions)
 
 Triton can be started using Docker and the compose plugin. The service is located in the `docker-compose.yml` file named `triton`. 
 
 To see each model repository, pull them down using the AWS cli:
 ```bash
-aws s3 cp s3://tipofmytongue-models-gpu/ ./models/ --recursive
+aws s3 cp s3://tipofmytongue-models/ ./models/ --recursive
 ```
 
 ## Using Triton on GPU
-Running Triton on a machine with a CUDA-enabled GPU will yeild the best results. If running on a GPU, make sure the following option exists:
-1. Under the `triton` service in the `docker-compose.yml` file add the following:
+Running Triton on a machine with a CUDA-enabled GPU will yeild the best results. If you are not running on a GPU, make sure the following option is removed:
+1. Under the `triton` service in the `docker-compose.yml` file remove the following:
 
     ```yaml title="docker-compose.yml"
     deploy:
@@ -37,7 +37,7 @@ Running Triton on a machine with a CUDA-enabled GPU will yeild the best results.
               capabilities: [gpu]
     ```
 
-2. The `instance_group` option in each `config.pbtxt` file should be set to `KIND_GPU` as opposed to `KIND_CPU`. The count option is how many instances of the model you want to load. This is advantageous to handle two requests coming at the same time.
+2. The `instance_group` option in each `config.pbtxt` file should be set to `KIND_CPU` as opposed to `KIND_GPU`. The count option is how many instances of the model you want to load. This is advantageous to handle two requests coming at the same time.
 
     ```yaml title="config.pbtxt"
     instance_group [
@@ -47,8 +47,8 @@ Running Triton on a machine with a CUDA-enabled GPU will yeild the best results.
         }
     ]
     ```
-In this branch, these options should already be set.
 
+The s3 bucket `s3://tipofmytongue-models/` will have these changes for CPU and the s3 bucket `s3://tipofmytongue-models-gpu/` will have these changes for GPU.
 
 
 ## How Triton Works
@@ -138,7 +138,7 @@ model_warmup [
 instance_group [
   {
     count: 2
-    kind: KIND_GPU
+    kind: KIND_CPU
   }
 ]
 

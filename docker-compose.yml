@@ -46,13 +46,6 @@ services:
     depends_on:
       - standalone
     env_file: ./triton/.env
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
     healthcheck:
       test: [ "CMD", "curl", "-i", "-X", "GET", "http://localhost:8000/v2/health/ready" ]
       interval: 30s

@@ -35,7 +35,7 @@ The server relies on a list of words & a pre-computed PCA model file. Each of th
     AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
     AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
     AWS_DEFAULT_REGION=<AWS_DEFAULT_REGION>
-    MODEL_REPO="s3://tipofmytongue-models-gpu/all-MiniLM-L6-v2/"
+    MODEL_REPO="s3://tipofmytongue-models/all-MiniLM-L6-v2/"
     ```
     There are other options for models. For more information see the Triton [readme](../triton/readme.md).
 
