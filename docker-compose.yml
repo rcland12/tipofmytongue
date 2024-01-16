@@ -45,7 +45,7 @@ services:
       - backend
     ports:
       - 8000-8001:8000-8001
-    env_file: ./triton/.env
+    env_file: .env
     depends_on:
       - standalone
     healthcheck:
