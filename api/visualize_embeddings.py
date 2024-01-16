@@ -18,22 +18,17 @@ def main(
     model_name,
     pca_model_dir,
     milvus_uri,
-    triton_uri,
-    connection_timeout=10
+    triton_uri
 ):
     # Milvus doesn't allow hyphens, so replace with underscores
     embedding_collection_name = model_name.replace("-", "_") if "-" in model_name else model_name
     pca_collection_name = embedding_collection_name + "_pca"
     # append model name to PCA model to allow for more than one
-<<<<<<< HEAD
-    pca_model_path = os.path.join(pca_model_path, "pca_model_" + embedding_collection_name + ".pkl")
-=======
     pca_model_path = os.path.join(pca_model_dir, "pca_model_" + embedding_collection_name + ".pkl")
->>>>>>> a22f915ad2fa0523c6da80f7d87eda792e9e4a13
 
     # Establish connection to Milvus and Triton service
     try:
-        connections.connect(alias="default", uri=milvus_uri, timeout=connection_timeout)
+        connections.connect(alias="default", uri=milvus_uri)
         model = TritonRemoteModel(uri=triton_uri, model_name=model_name)
     except MilvusException as e:
         print(f"Could not establish connection to Milvus: {e}")
