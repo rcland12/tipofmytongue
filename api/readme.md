@@ -7,7 +7,7 @@ This directory contains the scripts & API implementation used to run the backend
 The server relies on a list of words & a pre-computed PCA model file. Each of these must be created before starting the server:
 
 1. Vocabulary list `res/words.txt` - (created in Step #1) a list of words to query against
-2. PCA Transform Model `res/pca_transform.pkl` - (created in Step #6) the trained PCA model
+2. PCA Transform Model `res/pca_model_<MODEL_NAME>.pkl` - (created in Step #6) the trained PCA model
 
 ## Development Setup
 
@@ -25,28 +25,36 @@ The server relies on a list of words & a pre-computed PCA model file. Each of th
     ```
     Poetry will install the "local" group for packages running in the venv, and the "docker" group for packages in the Docker container.
 
-3. Prepare Triton by creating an `.env` file with AWS credentials and the model repository location:
+3. Prepare Triton by creating an `.env` file with AWS credentials and the model information:
     ```bash
     cd ../triton
     touch .env
     ```
 
-    ```text title=".env"
+    ```bash title=".env"
+    # .env
+    MODEL_NAME=gte-small
+    MODEL_REPO=s3://tipofmytongue-models
+
     AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
     AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
     AWS_DEFAULT_REGION=<AWS_DEFAULT_REGION>
-    MODEL_REPO="s3://tipofmytongue-models/all-MiniLM-L6-v2/"
     ```
+
     There are other options for models. For more information see the Triton [readme](../triton/readme.md).
 
 4. Start Milvus and Triton services (Triton depends on Milvus, so Milvus will start when Triton is launched):
     ```bash
+    cd ..
+
     docker compose up -d triton
     ```
     If you have issues, remove the `-d` flag to troubleshoot.
 
-5. Build the embedding cache into Milvus (this step will take the longest ~5-80 minutes depending on hardware and model dimensions):
+5. Build the embedding cache into Milvus (this step will take the longest ~5-120 minutes depending on hardware and model dimensions). In steps 5-8, set the model name and model dimensions manually in `main()`.
     ```bash
+    cd api
+
     # Options can be changed at the bottom of this file
     python build_embeddings.py
     ```
@@ -56,7 +64,7 @@ The server relies on a list of words & a pre-computed PCA model file. Each of th
     # Options can be changed at the bottom of this file
     python build_pca_embeddings.py
     ```
-    By default, the pickle model will save to `res/pca_transform.pkl`.
+    By default, the pickle model will save to `res/pca_model_<MODEL_NAME>.pkl`.
 
 7. (Optional - debug tooling) Query an embedding against the cache db:
     ```bash
@@ -73,14 +81,18 @@ The server relies on a list of words & a pre-computed PCA model file. Each of th
 
 ## Deployment
 
-1. Run the API server ()
+1. Set the model information in the `.env` file and run the API server ():
+    ```bash title=".env"
+    # .env
+    MODEL_NAME=<MODEL_NAME>
+    MODEL_REPO=<S3_BUCKET>
+
+    AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
+    AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
+    AWS_DEFAULT_REGION=<AWS_DEFAULT_REGION>
+    ```
+
     ```bash
-    cd ..
-
-    # If Milvus and Triton are still running
-    docker compose up -d app webapp
-
-    # If Milvus and Triton are not running, run all services:
     docker compose up -d
     ```
 
@@ -106,4 +118,8 @@ https://ademoverflow.com/blog/tutorial-fastapi-aws-lambda-serverless/
 * There have been issues with installing packages with poetry. If your poetry installation is stuck at "resolving dependencies..." add the verbose flag "-vvv". Furthermore, if it is stuck at "Loading MacOS", add the following variable to your environment by running this:
     ```bash
     export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
+<<<<<<< HEAD
     ```
+=======
+    ```
+>>>>>>> a22f915ad2fa0523c6da80f7d87eda792e9e4a13

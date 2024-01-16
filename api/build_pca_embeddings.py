@@ -1,5 +1,6 @@
 import os
 import sys
+
 from pymilvus import (
     connections,
     utility,
@@ -16,7 +17,7 @@ def main(
     embedding_dims,
     batch_size,
     path_to_vocab,
-    pca_model_path,
+    pca_model_dir,
     milvus_uri,
     connection_timeout=10
 ):
@@ -24,7 +25,7 @@ def main(
     embedding_collection_name = model_name.replace("-", "_") if "-" in model_name else model_name
     pca_collection_name = embedding_collection_name + "_pca"
     # append model name to PCA model to allow for more than one
-    pca_model_path = os.path.join(pca_model_path, "pca_model_" + embedding_collection_name + ".pkl")
+    pca_model_path = os.path.join(pca_model_dir, "pca_model_" + embedding_collection_name + ".pkl")
 
     # Establish connection to Milvus
     try:
@@ -98,10 +99,10 @@ def main(
 
 if __name__ == "__main__":
     main(
-        model_name="all-MiniLM-L6-v2",
+        model_name="gte-small",
         embedding_dims=3,
         batch_size=5000,
         path_to_vocab="res/words.txt",
-        pca_model_path="res/",
+        pca_model_dir="res/",
         milvus_uri="grpc://localhost:19530"
     )

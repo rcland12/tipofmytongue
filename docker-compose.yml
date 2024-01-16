@@ -12,10 +12,10 @@ services:
       context: ./webapp
     networks:
       - frontend
-    environment:
-      API_SERVER: app:8100
     ports:
       - 8080:80
+    environment:
+      API_SERVER: app:8100
     depends_on:
       - app
 
@@ -27,14 +27,16 @@ services:
       - backend
     volumes:
       - ./api/res:/src/res:ro
+    env_file: .env
     depends_on:
       - triton
       - standalone
     healthcheck:
       test: [ "CMD", "curl", "-i", "-X", "GET", "http://localhost:8100/health" ]
-      interval: 60s
+      interval: 30s
       timeout: 20s
       retries: 3
+    restart: unless-stopped
 
   triton:
     build:
@@ -43,9 +45,9 @@ services:
       - backend
     ports:
       - 8000-8001:8000-8001
+    env_file: ./triton/.env
     depends_on:
       - standalone
-    env_file: ./triton/.env
     healthcheck:
       test: [ "CMD", "curl", "-i", "-X", "GET", "http://localhost:8000/v2/health/ready" ]
       interval: 30s

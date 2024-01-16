@@ -3,11 +3,11 @@ import sys
 import joblib
 from typing import List
 
-from fastapi import FastAPI, status
-from pydantic import BaseModel
-from contextlib import asynccontextmanager
 from enum import Enum
 from mangum import Mangum
+from pydantic import BaseModel
+from fastapi import FastAPI, status
+from contextlib import asynccontextmanager
 from pymilvus import connections, Collection, MilvusException
 
 from app.embedding_utils import create_embedding
@@ -19,18 +19,18 @@ from app.triton_utils import TritonRemoteModel
 ###########################
 ### App Dependencies
 ###########################
-model_name = "all-MiniLM-L6-v2"
-# model_name = "gte-large"
-
+model_name = os.getenv("MODEL_NAME")
 milvus_uri = "grpc://standalone:19530"
 triton_uri = "grpc://triton:8001"
-pca_model_path = "res/"
+pca_model_dir = "res/"
 connection_timeout = 60
 
 embedding_collection_name = model_name.replace("-", "_") if "-" in model_name else model_name
 pca_collection_name = embedding_collection_name + "_pca"
 # append model name to PCA model to allow for more than one
-pca_model_path = os.path.join(pca_model_path, "pca_model_" + embedding_collection_name + ".pkl")
+pca_model_path = os.path.join(pca_model_dir, "pca_model_" + embedding_collection_name + ".pkl")
+
+
 
 # Establish connection to Milvus and Triton service
 try:
@@ -43,12 +43,23 @@ except ConnectionRefusedError as e:
     print(f"Could not establish connection to Triton: {e}")
     sys.exit(0)
 
-embedding_collection = Collection(embedding_collection_name)
-embedding_collection.load()
+# Load Milvus collections for embeddings and pca_embeddings
+try:
+    embedding_collection = Collection(embedding_collection_name)
+    embedding_collection.load()
+except Exception as e:
+    print(f"Milvus collection load error: {e}.")
+    print(f"Make sure the collection `{embedding_collection_name}` exists and is populated.")
+    sys.exit(0)
+try:
+    pca_collection = Collection(pca_collection_name)
+    pca_collection.load()
+except Exception as e:
+    print(f"Milvus collection load error: {e}.")
+    print(f"Make sure the collection `{pca_collection_name}` exists and is populated.")
+    sys.exit(0)
 
-pca_collection = Collection(pca_collection_name)
-pca_collection.load()
-
+# Load fitted PCA model
 try:
     transform_model = joblib.load(pca_model_path)
 except (FileNotFoundError, IndexError) as e:

@@ -1,28 +1,36 @@
 ## Setting up Triton Inference Server
-This Triton model repository is available at `s3://tipofmytongue-models/` and is public facing. This project requires an environment variable file at `triton/.env`.
+There are many different Triton model repositories available at `s3://tipofmytongue-models/` and are public facing. This project requires an environment variable file `.env`, in the root of this project, containing the model name, s3 bucket name, and AWS credentials.
 
-```bash title="triton/.env"
+```bash title=".env"
+# triton/.env
+MODEL_NAME=gte-small
+MODEL_REPO=s3://tipofmytongue-models
+
 AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
 AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
 AWS_DEFAULT_REGION=<AWS_DEFAULT_REGION>
-MODEL_REPO="s3://tipofmytongue-models/all-MiniLM-L6-v2/"
 ```
 
-There are currently two models available at the following locations:
-* all-MiniLM-L6-v2: `s3://tipofmytongue-models/all-MiniLM-L6-v2/` (384 dimensions)
-* gte-large: `s3://tipofmytongue-models/gte-large/` (1024 dimensions)
+The final path will concatenate the `MODEL_NAME` and `MODEL_REPO` with a forward slash (`/`)
 
-Triton can be started using Docker and the compose plugin. The service is located in the `docker-compose.yml` file named `triton`.
+There are currently six model repositories available at the following locations:
+* all-MiniLM-L6-v2: `s3://tipofmytongue-models/all-MiniLM-L6-v2/` (384 dimensions)
+* all-distilroberta-v1: `s3://tipofmytongue-models/all-distilroberta-v1/` (768 dimensions)
+* gte-large: `s3://tipofmytongue-models/gte-large/` (1024 dimensions)
+* gte-base: `s3://tipofmytongue-models/gte-base/` (768 dimensions)
+* gte-small: `s3://tipofmytongue-models/gte-small/` (384 dimensions)
+* ember-v1: `s3://tipofmytongue-models/ember-v1/` (1024 dimensions)
+
+Triton can be started using Docker and the compose plugin. The service is located in the `docker-compose.yml` file named `triton`. 
 
 To see each model repository, pull them down using the AWS cli:
 ```bash
 aws s3 cp s3://tipofmytongue-models/ ./models/ --recursive
 ```
 
-
 ## Using Triton on CPU
-Triton can run on a CPU, but can run fast on a CUDA-enabled GPU so consider that. If running on a CPU, make sure the following options are disabled:
-1. REMOVE the docker-compose option exposing the GPU in the `triton` service.
+Running Triton on a machine with a CUDA-enabled GPU will yeild the best results. If you are not running on a GPU, make sure the following option is removed:
+1. Under the `triton` service in the `docker-compose.yml` file remove the following:
 
     ```yaml title="docker-compose.yml"
     deploy:
@@ -44,8 +52,8 @@ Triton can run on a CPU, but can run fast on a CUDA-enabled GPU so consider that
         }
     ]
     ```
-In this branch, these options should already be set.
 
+The s3 bucket `s3://tipofmytongue-models/` will have these changes for CPU and the s3 bucket `s3://tipofmytongue-models-gpu/` will have these changes for GPU.
 
 
 ## How Triton Works
